@@ -1,0 +1,31 @@
+#Get fund by country for advisor
+
+$defaultPath = "/sitecore/content"
+[Sitecore.Data.ID]$templateId = "{102D5FDC-B663-4D29-BDA8-4073E49D55A4}"
+$countryId = "{CCAF3283-016F-4076-A58D-5C77FD5557A0}"
+
+$fundDetails = Find-Item -Index sitecore_master_index `
+   -Where 'TemplateId = @0 and Path.StartsWith(@1) and Language=@2' `
+   -WhereValues $templateId, $defaultPath, "en" | Initialize-Item
+   
+foreach($fundDetail in $fundDetails)
+{
+    $rawIds = [Sitecore.Data.Fields.NameValueListField]$fundDetail.Fields["PortfolioManagers"]
+    $selectedItem = $rawIds[0].Value
+    #foreach($selectedItem in $rawIds)
+    #{
+        if($selectedItem.indexOf("D1A5ADEF-C1DC-4ED9-A3D1-449D67E8DC61") -gt -1)
+        {
+            $advisorCountries = [Sitecore.Data.Fields.MultilistField]$fundDetail.Fields["AdviserAndInstitutionalRegistrations"]
+            if($advisorCountries.Value.indexOf($countryId) -gt -1)
+            {   
+                Write-Host("varion" + $fundDetail.Version)
+                Write-Host("found" + $advisorCountries.Value)
+                Write-Host("fund detail" + $fundDetail.ID)
+            }
+        }
+        
+    #}
+}
+
+
